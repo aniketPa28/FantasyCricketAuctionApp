@@ -23,7 +23,7 @@ This application utilizes a simple graphical user interface (GUI) built using Ja
 
 ```bash
 git clone https://github.com/yourusername/FantasyCricketAuctionApp.git
-
+```
 ## 2. Install Apache POI
 
 - The application uses Apache POI to read and write Excel files. Ensure the POI dependencies are included in your project. If you're using Maven, add the following to your pom.xml:
@@ -33,7 +33,7 @@ git clone https://github.com/yourusername/FantasyCricketAuctionApp.git
     <artifactId>poi-ooxml</artifactId>
     <version>5.2.3</version>
 </dependency>
-
+```
 ## 3. Excel File Structure
 
 - Ensure you have an auction_data.xlsx file with the following sheets:
