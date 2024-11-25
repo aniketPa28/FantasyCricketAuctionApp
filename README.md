@@ -1,27 +1,29 @@
-**Fantasy Cricket Auction Application**
+# Fantasy Cricket Auction Application
 
-A Java-based application for managing a fantasy cricket auction, where participants can bid on players using their allocated budgets. The application uses Excel files to store and load data such as participant budgets, player details, and bids. This application allows participants to place bids, process the highest bids, and update their budgets accordingly.
-Features
+## Overview
+The **Fantasy Cricket Auction Application** is a Java-based auction system for fantasy cricket teams. The application allows participants to place bids on cricket players, manage their budgets, and view the leaderboard for the auction.
 
-    Auction Interface: Allows participants to place bids on players in the auction.
-    Bid Processing: Processes bids and determines the highest bid for each player.
-    Budget Management: Each participant has an allocated budget, and their budget is updated after processing bids.
-    Excel Integration: Data is stored and loaded from Excel files for players, participants, and bids.
-    Leaderboard: Displays the winning participant for each player and their bid amount.
-    Reset & Initialization: Resets the bids and participant budgets, and initializes Excel data when the application starts.
+This application utilizes a simple graphical user interface (GUI) built using JavaFX and stores auction data in an Excel file using Apache POI.
 
-**Prerequisites**
+## Features
+- **Bid Placement**: Participants can place bids on cricket players.
+- **Budget Management**: Each participant has a budget, which is updated as they place bids.
+- **Leaderboard**: The application displays the leaderboard showing the winner of each auctioned player.
+- **Excel Integration**: The data (players, participants, and bids) is loaded and saved to an Excel file using Apache POI.
+- **Bid Processing**: After all bids are placed, the application processes the highest bid for each player and updates the budgets accordingly.
 
-    Java 8 or later
-    Apache POI library for Excel file handling
-    Apache Maven for project management (optional)
+## Requirements
+- Java 11 or later.
+- Apache POI library for reading and writing Excel files.
+- JavaFX for the GUI components.
 
-**Setup**
-1. Clone the repository
+## Installation
 
-Clone the repository to your local machine:
+### 1. Clone the repository
 
-git clone <repository_url>
+```bash
+```git clone https://github.com/yourusername/FantasyCricketAuctionApp.git
+```
 
 2. Install Apache POI
 
@@ -37,10 +39,10 @@ The application uses Apache POI to read and write Excel files. Ensure the POI de
 
 Ensure you have an auction_data.xlsx file with the following sheets:
 Players Sheet:
-Player Name	Role	Base Price
-Virat Kohli	Batsman	500
-Ben Stokes	All-Rounder	400
-Jasprit Bumrah	Bowler	300
+|Player Name - Role - Base Price
+|Virat Kohli - Batsman- 500
+|Ben Stokes	All-Rounder - 400
+|Jasprit Bumrah - Bowler - 300
 ...	...	...
 Participants Sheet:
 Participant Name	Budget
