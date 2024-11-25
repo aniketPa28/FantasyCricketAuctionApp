@@ -37,7 +37,7 @@ git clone https://github.com/yourusername/FantasyCricketAuctionApp.git
 ## 3. Excel File Structure
 
 - Ensure you have an auction_data.xlsx file with the following sheets:
-- Players Sheet:
+  Players Sheet:
 |Player Name |Role | Base Price
 |Virat Kohli | Batsman | 500
 |Ben Stokes | All-Rounder | 400
@@ -62,7 +62,7 @@ Ben Stokes	Mike	30
 ```bash
 mvn clean install
 mvn javafx:run
-
+```
 ## 2. Running from IDE:
 
 - If you're using an IDE like IntelliJ IDEA or Eclipse, you can directly run the FantasyCricketAppUI class as a Java application. Ensure that the auction_data.xlsx file is placed in the correct directory, or specify the - full path to the file in the code.
