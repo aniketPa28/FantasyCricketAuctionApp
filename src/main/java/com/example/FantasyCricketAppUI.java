@@ -27,6 +27,10 @@ public class FantasyCricketAppUI extends Application {
     private TableView<AwardedPlayer> leaderboardTable;
     private TableView<ParticipantBudget> participantBudgetTable;
     private Map<String, List<Bid>> playerBidMap;
+    private Player selectedPlayer; // Store the player selected by "Select Player"
+    private List<Player> remainingPlayers; // To track unselected players
+    private Label selectedPlayerLabel = new Label("No player selected");
+    private List<AwardedPlayer> awardedPlayers = new ArrayList<>();
 
     private static final int INITIAL_BUDGET = 100;
     private int bidCounter = 0; // Counter for tracking bids
@@ -47,11 +51,21 @@ public class FantasyCricketAppUI extends Application {
 
         // Create some sample data
         createSampleData();
+        //Initialize Auction Player List
+        initializePlayersFromExcel();
 
         // UI Elements for Auction
         Label auctionLabel = new Label("Fantasy Cricket Auction");
-        ComboBox<Player> playerComboBox = new ComboBox<>();
-        playerComboBox.getItems().addAll(players);
+        //ComboBox<Player> playerComboBox = new ComboBox<>();
+        //playerComboBox.getItems().addAll(players);
+
+        // Selected player label
+        //Label selectedPlayerLabel = new Label("No player selected");
+        selectedPlayerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        // Select Player button
+        Button selectPlayerButton = new Button("Select Player");
+        selectPlayerButton.setOnAction(e -> selectPlayer());
 
         ComboBox<Participant> participantComboBox = new ComboBox<>();
         participantComboBox.getItems().addAll(participants);
@@ -60,10 +74,10 @@ public class FantasyCricketAppUI extends Application {
         bidField.setPromptText("Enter your bid");
 
         Button bidButton = new Button("Place Bid");
-        bidButton.setOnAction(event -> handleBid(playerComboBox, participantComboBox, bidField));
+        bidButton.setOnAction(event -> handleBid(participantComboBox, bidField));
 
         Button processBidsButton = new Button("Process Bids");
-        processBidsButton.setOnAction(event -> processBids());
+        processBidsButton.setOnAction(event -> processBids(selectedPlayer));
 
         Button resetBidsButton = new Button("Reset Bids");
         resetBidsButton.setOnAction(event -> resetBids());
@@ -76,16 +90,41 @@ public class FantasyCricketAppUI extends Application {
         participantBudgetTable = new TableView<>();
         setUpParticipantBudgetTable();
 
-        // Layout
-        VBox auctionLayout = new VBox(10, auctionLabel, playerComboBox, participantComboBox, bidField, bidButton, processBidsButton, resetBidsButton);
-        VBox leaderboardLayout = new VBox(10, new Label("Leaderboard"), leaderboardTable);
-        VBox participantBudgetLayout = new VBox(10, new Label("Participant Budgets"), participantBudgetTable);
+// Auction Layout
+        VBox auctionLayout = new VBox(10);
+        auctionLayout.getChildren().addAll(auctionLabel, selectPlayerButton, selectedPlayerLabel, participantComboBox, bidField, bidButton, processBidsButton, resetBidsButton);
+        auctionLayout.setPrefWidth(300);
+        auctionLayout.setFillWidth(true); // Allow components to resize with the VBox
 
-        HBox mainLayout = new HBox(20, auctionLayout, leaderboardLayout, participantBudgetLayout);
+// Leaderboard Layout
+        VBox leaderboardLayout = new VBox(10);
+        leaderboardLayout.getChildren().addAll(new Label("Leaderboard"), leaderboardTable);
+        leaderboardLayout.setPrefWidth(300);
+        leaderboardLayout.setFillWidth(true);
+
+// Participant Budget Layout
+        VBox participantBudgetLayout = new VBox(10);
+        participantBudgetLayout.getChildren().addAll(new Label("Participant Budgets"), participantBudgetTable);
+        participantBudgetLayout.setPrefWidth(300);
+        participantBudgetLayout.setFillWidth(true);
+
+// Main Layout
+        HBox mainLayout = new HBox(20);
+        mainLayout.getChildren().addAll(auctionLayout, leaderboardLayout, participantBudgetLayout);
         mainLayout.setPadding(new Insets(20));
 
-        // Set up the scene
+// Enable scaling for all layouts
+        mainLayout.setHgrow(auctionLayout, Priority.ALWAYS);
+        mainLayout.setHgrow(leaderboardLayout, Priority.ALWAYS);
+        mainLayout.setHgrow(participantBudgetLayout, Priority.ALWAYS);
+        auctionLayout.setVgrow(auctionLabel, Priority.ALWAYS);
+        leaderboardLayout.setVgrow(leaderboardTable, Priority.ALWAYS);
+        participantBudgetLayout.setVgrow(participantBudgetTable, Priority.ALWAYS);
+
+// Set up the scene
         Scene scene = new Scene(mainLayout, 800, 400);
+        scene.getStylesheets().add("styles.css"); // Optional: Add styling for finer control
+
         primaryStage.setTitle("Fantasy Cricket Auction");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -136,6 +175,46 @@ public class FantasyCricketAppUI extends Application {
         }
     }
 
+    private void initializePlayersFromExcel() {
+        remainingPlayers = new ArrayList<>(players);
+        awardedPlayers.clear();
+//        try (FileInputStream fis = new FileInputStream(new File(filePath))) {
+//            Workbook workbook = new XSSFWorkbook(fis);
+//            Sheet playerSheet = workbook.getSheet("Players");
+//
+//            // Read player data from the "Players" sheet
+//            for (Row row : playerSheet) {
+//                if (row.getRowNum() == 0) continue; // Skip header row
+//                String playerName = row.getCell(0).getStringCellValue();
+//                String playerRole = row.getCell(1).getStringCellValue();
+//                int basePrice = (int) row.getCell(2).getNumericCellValue();
+//                playerList.add(new Player(playerName, playerRole, basePrice));
+//            }
+//
+//            // Copy all players to remainingPlayers
+//            remainingPlayers.addAll(playerList);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    private void selectPlayer() {
+        if (remainingPlayers.isEmpty()) {
+            // No players left to select
+            selectedPlayerLabel.setText("All players have been auctioned!");
+            return;
+        }
+
+        // Randomly select a player
+        Random random = new Random();
+        int randomIndex = random.nextInt(remainingPlayers.size());
+        selectedPlayer = remainingPlayers.remove(randomIndex);
+
+        // Display the selected player
+        selectedPlayerLabel.setText("Selected Player: " + selectedPlayer.getName());
+    }
+
     private void loadParticipantsAndPlayersFromExcel(String filePath) {
         try (FileInputStream fis = new FileInputStream(new File(filePath))) {
             Workbook workbook = new XSSFWorkbook(fis);
@@ -164,8 +243,7 @@ public class FantasyCricketAppUI extends Application {
         }
     }
 
-    private void handleBid(ComboBox<Player> playerComboBox, ComboBox<Participant> participantComboBox, TextField bidField) {
-        Player selectedPlayer = playerComboBox.getSelectionModel().getSelectedItem();
+    private void handleBid(ComboBox<Participant> participantComboBox, TextField bidField) {
         Participant selectedParticipant = participantComboBox.getSelectionModel().getSelectedItem();
         int bidAmount;
 
@@ -199,6 +277,7 @@ public class FantasyCricketAppUI extends Application {
 
             // Increment the bid counter
             bidCounter++;
+            System.out.println("Bid Map :" + playerBidMap);
 
             // Update the participant list and disable bidding if budget is exhausted
             updateParticipantList();
@@ -207,12 +286,15 @@ public class FantasyCricketAppUI extends Application {
         }
     }
 
-    private void processBids() {
-        List<AwardedPlayer> awardedPlayers = new ArrayList<>();
+    private void processBids(Player selectedPlayer) {
 
-        for (String playerName : playerBidMap.keySet()) {
-            List<Bid> bids = playerBidMap.get(playerName);
-            Bid highestBid = null;
+        if (!playerBidMap.containsKey(selectedPlayer.getName())) {
+            System.out.println("No bids available for the selected player: " + selectedPlayer);
+            return;
+        }
+
+        List<Bid> bids = playerBidMap.get(selectedPlayer.getName());
+        Bid highestBid = null;
 
             // Determine the highest bid
             for (Bid bid : bids) {
@@ -224,26 +306,24 @@ public class FantasyCricketAppUI extends Application {
             if (highestBid != null) {
                 // Award the player to the participant with the highest bid
                 AwardedPlayer awardedPlayer = new AwardedPlayer(
-                        playerName,
+                        selectedPlayer.getName(),
                         highestBid.getParticipant(),
                         String.valueOf(highestBid.getAmount())
                 );
                 awardedPlayers.add(awardedPlayer);
-                participants.
-                        getsetBudget(participant.getCurrentBudget() - highestBid.getAmount());
 
                 // Update budgets for all participants
                 for (Participant participant : participants) {
                     if (participant.getName().equals(highestBid.getParticipant())) {
                         // Winner: Subtract the bid amount from their current budget
                         participant.setBudget(participant.getCurrentBudget() - highestBid.getAmount());
+                        participant.setCurrentBudget(participant.getCurrentBudget() - highestBid.getAmount());
                     } else {
                         // Non-winners: Reset their budget to the saved currentBudget
                         participant.setBudget(participant.getCurrentBudget());
                     }
                 }
             }
-        }
 
         // Reset the bid counter after processing bids
         bidCounter = 0;
@@ -254,7 +334,6 @@ public class FantasyCricketAppUI extends Application {
         // Save updated participant data to Excel and bids
         saveParticipantsToExcel("auction_data.xlsx");
         saveBidsToExcel("auction_data.xlsx");
-
         // Update the participant budget table after processing bids
         updateParticipantBudgetTable();
 
@@ -328,6 +407,10 @@ public class FantasyCricketAppUI extends Application {
 
         // Update participant list
         updateParticipantList();
+
+        //Initialize auction list
+        initializePlayersFromExcel();
+        selectedPlayerLabel.setText("No player selected");
 
         showAlert("Bids Reset", "All bids have been cleared and participants' budgets have been reset to 100.");
     }
