@@ -34,29 +34,8 @@ git clone https://github.com/yourusername/FantasyCricketAuctionApp.git
     <version>5.2.3</version>
 </dependency>
 ```
-## 3. Excel File Structure
-
-- Ensure you have an auction_data.xlsx file with the following sheets:
-  Players Sheet:
-|Player Name |Role | Base Price
-|Virat Kohli | Batsman | 500
-|Ben Stokes | All-Rounder | 400
-|Jasprit Bumrah | Bowler | 300
-...	...	...
-Participants Sheet:
-Participant Name	Budget
-John	100
-Mike	100
-...	...
-Bids Sheet:
-Player Name	Participant Name	Bid Amount
-Virat Kohli	John	50
-Ben Stokes	Mike	30
-...	...	...
-
-- The application will initialize the budgets for all participants to 100 and clear the bids when it starts.
 ## Running the Application
-- 1. Build and Run using Maven:
+- Build and Run using Maven:
 
 - To compile and run the application with Maven, use the following commands in your project directory:
 ```bash
