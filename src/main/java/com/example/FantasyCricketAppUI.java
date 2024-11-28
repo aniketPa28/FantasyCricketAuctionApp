@@ -30,6 +30,7 @@ public class FantasyCricketAppUI extends Application {
     private Player selectedPlayer; // Store the player selected by "Select Player"
     private List<Player> remainingPlayers; // To track unselected players
     private Label selectedPlayerLabel = new Label("No player selected");
+    private Label selectedPlayerBasePrice = new Label("");
     private List<AwardedPlayer> awardedPlayers = new ArrayList<>();
 
     private static final int INITIAL_BUDGET = 100;
@@ -62,6 +63,7 @@ public class FantasyCricketAppUI extends Application {
         // Selected player label
         //Label selectedPlayerLabel = new Label("No player selected");
         selectedPlayerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+        selectedPlayerBasePrice.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
 
         // Select Player button
         Button selectPlayerButton = new Button("Select Player");
@@ -92,7 +94,7 @@ public class FantasyCricketAppUI extends Application {
 
 // Auction Layout
         VBox auctionLayout = new VBox(10);
-        auctionLayout.getChildren().addAll(auctionLabel, selectPlayerButton, selectedPlayerLabel, participantComboBox, bidField, bidButton, processBidsButton, resetBidsButton);
+        auctionLayout.getChildren().addAll(auctionLabel, selectPlayerButton, selectedPlayerLabel, selectedPlayerBasePrice, participantComboBox, bidField, bidButton, processBidsButton, resetBidsButton);
         auctionLayout.setPrefWidth(300);
         auctionLayout.setFillWidth(true); // Allow components to resize with the VBox
 
@@ -203,6 +205,7 @@ public class FantasyCricketAppUI extends Application {
         if (remainingPlayers.isEmpty()) {
             // No players left to select
             selectedPlayerLabel.setText("All players have been auctioned!");
+            selectedPlayerBasePrice.setText("");
             return;
         }
 
@@ -213,6 +216,7 @@ public class FantasyCricketAppUI extends Application {
 
         // Display the selected player
         selectedPlayerLabel.setText("Selected Player: " + selectedPlayer.getName());
+        selectedPlayerBasePrice.setText("Base  Price: " + selectedPlayer.getBasePrice());
     }
 
     private void loadParticipantsAndPlayersFromExcel(String filePath) {
@@ -411,6 +415,7 @@ public class FantasyCricketAppUI extends Application {
         //Initialize auction list
         initializePlayersFromExcel();
         selectedPlayerLabel.setText("No player selected");
+        selectedPlayerBasePrice.setText("");
 
         showAlert("Bids Reset", "All bids have been cleared and participants' budgets have been reset to 100.");
     }
